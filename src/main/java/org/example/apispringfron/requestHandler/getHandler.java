@@ -3,32 +3,30 @@ package org.example.apispringfron.requestHandler;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
 public class getHandler {
-
+    private static OkHttpClient client = new OkHttpClient();
+    private String defaultApiBody = "http://localhost:8080/api/v1/employees";
 
     public String getAllEmployees(){
         String responseBody;
-        String url = "http://localhost:8080/api/v1/employees";
-        OkHttpClient client = new OkHttpClient();
+        String url = defaultApiBody;
 
         Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
 
-        try(Response response = client.newCall(request).execute()) {
-            if(!response.isSuccessful()) {
-                throw new IOException("Unexpected error " + response);
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected error: " + response);
             }
-
             responseBody = response.body().string();
-            System.out.printf(responseBody);
-        } catch (IOException error){
-            responseBody = error.toString();
+        } catch (IOException error) {
+            responseBody = "Error fetching employees: " + error.getMessage();
+            System.err.println(error.toString());
             error.printStackTrace();
         }
 
@@ -37,24 +35,21 @@ public class getHandler {
 
     public String getEmployeeById(int employeeId){
         String responseBody;
-        String url = "http://localhost:8080/api/v1/employees/" + employeeId;
-
-        OkHttpClient client = new OkHttpClient();
+        String url = defaultApiBody + "/" + employeeId;
 
         Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
 
-        try(Response response = client.newCall(request).execute()) {
-            if(!response.isSuccessful()) {
-                throw new IOException("Unexpected error " + response);
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected error: " + response);
             }
-
             responseBody = response.body().string();
-            System.out.printf(responseBody);
-        } catch (IOException error){
-            responseBody = error.toString();
+        } catch (IOException error) {
+            responseBody = null;
+            System.err.println(error.toString());
             error.printStackTrace();
         }
 

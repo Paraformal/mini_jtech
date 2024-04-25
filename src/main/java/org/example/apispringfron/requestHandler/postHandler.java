@@ -8,14 +8,13 @@ import java.io.IOException;
 public class postHandler {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
+    private static OkHttpClient client = new OkHttpClient();
+    private String defaultApiBody = "http://localhost:8080/api/v1/employees";
 
     public String addEmployee(String firstName, String lastName, String emailId) {
 
         String responseBody;
-        String url = "http://localhost:8080/api/v1/employees/add/user";
-
-        OkHttpClient client = new OkHttpClient();
+        String url = defaultApiBody + "/add/user";
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("firstName", firstName);
@@ -36,13 +35,12 @@ public class postHandler {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unexpected error " + response);
+                throw new IOException("Unexpected error: " + response);
             }
-
             responseBody = response.body().string();
-            System.out.printf(responseBody);
         } catch (IOException error) {
-            responseBody = error.toString();
+            responseBody = "Error fetching employees: " + error.getMessage();
+            System.err.println(error.toString());
             error.printStackTrace();
         }
 
